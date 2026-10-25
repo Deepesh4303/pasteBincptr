@@ -15,4 +15,4 @@ binding = "ASSETS"
 [[d1_databases]]
 binding = "DB"
 database_name = "pastebin-db"
-database_id = "pastebin-db"
+database_id = "4a61c085-e150-4618-9a1d-63e272f19735"
