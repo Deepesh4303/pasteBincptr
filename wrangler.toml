@@ -1,13 +1,17 @@
 # ==============================================================================
-# Cloudflare Pages / Workers Configuration for cptr.in / pastebin
+# Cloudflare Worker + Static Assets Configuration
 # ==============================================================================
 
 name = "cptr-pastebin"
-compatibility_date = "2024-01-01"
-pages_build_output_dir = "."
+main = "worker.js"
+compatibility_date = "2024-09-23"
+
+# Static frontend assets (index.html, style.css, app.js)
+[assets]
+directory = "."
+binding = "ASSETS"
 
 # Cloudflare D1 Database Binding
-# Replace `database_id` with your D1 database ID from Cloudflare dashboard
 [[d1_databases]]
 binding = "DB"
 database_name = "pastebin-db"

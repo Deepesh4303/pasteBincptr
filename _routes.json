@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "include": [
+    "/api/*",
+    "/raw/*",
+    "/pastebin/*"
+  ],
+  "exclude": [
+    "/style.css",
+    "/app.js",
+    "/index.html",
+    "/404.html"
+  ]
+}
