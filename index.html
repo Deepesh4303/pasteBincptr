@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>cptr.in / pastebin</title>
+  <meta name="description" content="Minimalistic, lightweight text pastebin for cptr.in">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <a href="./" class="logo">
+          <span class="logo-accent">cptr.in</span><span class="logo-sub">/pastebin</span>
+        </a>
+        <span class="badge" id="mode-badge" title="Storage engine mode">Ready</span>
+      </div>
+      <div class="header-actions">
+        <button id="btn-theme-toggle" class="btn-icon" aria-label="Toggle dark/light theme" title="Toggle theme">🌓</button>
+        <button id="btn-settings-toggle" class="btn-icon" aria-label="Settings" title="API Settings">⚙️</button>
+      </div>
+    </header>
+
+    <!-- Settings Bar (Collapsible) -->
+    <div id="settings-panel" class="settings-panel hidden">
+      <div class="settings-row">
+        <label for="api-url-input">Backend API Base URL:</label>
+        <div class="input-inline">
+          <input type="text" id="api-url-input" placeholder="e.g. https://cptr.in or http://localhost:8000" />
+          <button id="btn-save-settings" class="btn btn-secondary btn-sm">Save</button>
+          <button id="btn-reset-settings" class="btn btn-outline btn-sm">Reset (Auto)</button>
+        </div>
+      </div>
+      <p class="settings-hint">
+        Tip: Leave empty for auto-detection. On GitHub Pages, you can point this to your VPS backend or leave empty for standalone client-side compressed hashes.
+      </p>
+    </div>
+
+    <!-- Mode Navigation Tabs -->
+    <nav class="nav-tabs" role="tablist">
+      <button class="tab-btn active" id="tab-send" role="tab" aria-selected="true" aria-controls="panel-send">
+        <span class="tab-icon">📝</span> Sender (Create)
+      </button>
+      <button class="tab-btn" id="tab-receive" role="tab" aria-selected="false" aria-controls="panel-receive">
+        <span class="tab-icon">📥</span> Receiver (Fetch)
+      </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- SENDER PANEL (Step 1 - UI Sender) -->
+      <section id="panel-send" class="tab-panel active" role="tabpanel" aria-labelledby="tab-send">
+        <div class="panel-header">
+          <label for="sender-text" class="panel-title">Text Box</label>
+          <div class="text-stats">
+            <span id="char-count">0 chars</span> &bull; 
+            <span id="line-count">0 lines</span>
+          </div>
+        </div>
+
+        <div class="editor-wrapper">
+          <textarea 
+            id="sender-text" 
+            placeholder="Type or paste your text here..." 
+            spellcheck="false" 
+            autofocus></textarea>
+        </div>
+
+        <!-- Sender Controls -->
+        <div class="controls-row">
+          <div class="controls-left">
+            <div class="form-group-inline">
+              <label for="paste-expiration" class="inline-label">Expires:</label>
+              <select id="paste-expiration" class="select-input">
+                <option value="never">Never</option>
+                <option value="1h">1 Hour</option>
+                <option value="1d">1 Day</option>
+                <option value="7d">7 Days</option>
+                <option value="burn">Burn after read</option>
+              </select>
+            </div>
+            <div class="form-group-inline">
+              <label for="custom-slug" class="inline-label">Custom Slug:</label>
+              <input type="text" id="custom-slug" class="input-slug" placeholder="optional (e.g. notes)" maxlength="32">
+            </div>
+          </div>
+
+          <div class="controls-right">
+            <button id="btn-clear-sender" class="btn btn-outline" title="Clear text box">Clear</button>
+            <button id="btn-send" class="btn btn-primary" title="Create and send paste (Ctrl+Enter)">
+              <span class="btn-text">Send Paste</span> 🚀
+            </button>
+          </div>
+        </div>
+
+        <!-- Sender Result Card -->
+        <div id="sender-result" class="result-card hidden">
+          <div class="result-header">
+            <span class="result-title">✅ Paste Created Successfully!</span>
+            <span class="result-slug" id="result-slug-badge">#hash</span>
+          </div>
+          <div class="link-box">
+            <input type="text" id="result-link-input" readonly value="">
+            <button id="btn-copy-link" class="btn btn-secondary">Copy Link</button>
+            <a id="btn-open-link" href="#" target="_blank" class="btn btn-outline">Open</a>
+          </div>
+          <div class="result-extra">
+            <span>Target link: <strong id="result-target-preview">cptr.in/pastebin/[hash]</strong></span>
+            <button id="btn-load-in-receiver" class="link-btn">View in Receiver tab &rarr;</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RECEIVER PANEL (Step 1 - UI Receiver) -->
+      <section id="panel-receive" class="tab-panel" role="tabpanel" aria-labelledby="tab-receive">
+        <div class="panel-header">
+          <label for="receiver-hash-input" class="panel-title">Receiver Box</label>
+        </div>
+
+        <!-- Receiver Input + Button -->
+        <div class="receiver-query-bar">
+          <input 
+            type="text" 
+            id="receiver-hash-input" 
+            placeholder="Enter hash or link (e.g. 7kX9a or cptr.in/pastebin/7kX9a)" 
+            autocomplete="off">
+          <button id="btn-receive" class="btn btn-primary">
+            <span class="btn-text">Receive</span> 📥
+          </button>
+        </div>
+
+        <!-- Receiver Meta info -->
+        <div id="receiver-meta" class="receiver-meta hidden">
+          <div>Hash: <strong id="meta-hash">-</strong></div>
+          <div>Created: <span id="meta-date">-</span></div>
+          <div>Views: <span id="meta-views">-</span></div>
+        </div>
+
+        <!-- Receiver Text Box -->
+        <div class="editor-wrapper receiver-box">
+          <textarea 
+            id="receiver-text" 
+            placeholder="Received text will appear here..." 
+            readonly></textarea>
+        </div>
+
+        <!-- Receiver Action Bar -->
+        <div class="controls-row receiver-actions">
+          <div class="controls-left">
+            <span id="receiver-stats" class="text-stats">Ready to receive</span>
+          </div>
+          <div class="controls-right">
+            <button id="btn-copy-received" class="btn btn-secondary" disabled>Copy Text</button>
+            <button id="btn-download-txt" class="btn btn-outline" disabled>Download .txt</button>
+            <button id="btn-fork-paste" class="btn btn-outline" disabled title="Load into sender to edit/fork">Fork / Edit</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden" role="alert" aria-live="polite"></div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-links">
+        <span>Target: <code>cptr.in/pastebin/[hash]</code></span>
+        <span>&bull;</span>
+        <span id="status-text">Minimalistic Vanilla JS + HTML</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+# SQLite database & runtime data
+*.db
+*.sqlite
+*.sqlite3
+pastes.json
+
+# Logs & temp
+*.log
+.DS_Store
+Thumbs.db
+
+# Node.js (if used)
+node_modules/
+npm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/

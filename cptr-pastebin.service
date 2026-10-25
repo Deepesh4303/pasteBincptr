@@ -1,0 +1,16 @@
+[Unit]
+Description=cptr.in Pastebin Python Backend Service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/pastebin
+ExecStart=/usr/bin/python3 /var/www/pastebin/server.py
+Restart=always
+RestartSec=3
+Environment=PORT=8000
+Environment=CANONICAL_DOMAIN=cptr.in
+
+[Install]
+WantedBy=multi-user.target
